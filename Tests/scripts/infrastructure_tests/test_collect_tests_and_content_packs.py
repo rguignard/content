@@ -258,44 +258,37 @@ class TestChangedTestPlaybook:
         create_filter_envs_file('0.0.0', '99.99.99')
         with open("./Tests/filter_envs.json", "r") as filter_envs_file:
             filter_envs = json.load(filter_envs_file)
-        assert filter_envs.get('Demisto PreGA') is True
-        assert filter_envs.get('Demisto Marketplace') is True
-        assert filter_envs.get('Demisto 6.0') is True
-        assert filter_envs.get('Demisto GA') is True
+        assert filter_envs.get('Server 5.5') is True
+        assert filter_envs.get('Server Master') is True
+        assert filter_envs.get('Server 6.0') is True
+        assert filter_envs.get('Server 5.0') is True
 
     def test_get_from_version_and_to_version_from_modified_files(self):
         """
         Given:
-            - fake_test_playbook is fromversion 4.1.0 in integration file
-            - two_before_ga is '4.0.0'
-            - one_before_ga is '4.0.1'
-            - ga is '4.1.0'
+            - fake_test_playbook is fromversion 5.5.0 in id_set
         When:
             - running get_test_list_and_content_packs_to_install
             - running create_filter_envs_file
         Then:
             - Create test list with fake_test_playbook
-            - Create filter_envs.json file with Demisto two before GA False and Demisto one before GA False
+            - Create filter_envs.json file with 5.0 as False
 
         """
-        two_before_ga = '4.0.0'
-        one_before_ga = '4.0.1'
-        ga = '4.1.0'
         test_path = 'Tests/scripts/infrastructure_tests/tests_data/mock_test_playbooks/fake_test_playbook.yml'
         modified_files_list, modified_tests_list, changed_common, _, sample_tests, modified_metadata_list, _, _ = \
             create_get_modified_files_ret(modified_files_list=[test_path], modified_tests_list=[test_path])
-
         all_modified_files_paths = set(modified_files_list + modified_tests_list + changed_common + sample_tests)
         from_version, to_version = get_from_version_and_to_version_bounderies(all_modified_files_paths,
                                                                               MOCK_ID_SET)
 
-        create_filter_envs_file(from_version, to_version, two_before_ga, one_before_ga, ga)
+        create_filter_envs_file(from_version, to_version)
         with open("./Tests/filter_envs.json", "r") as filter_envs_file:
             filter_envs = json.load(filter_envs_file)
-        assert filter_envs.get('Demisto PreGA') is True
-        assert filter_envs.get('Demisto Marketplace') is True
-        assert filter_envs.get('Demisto 6.0') is True
-        assert filter_envs.get('Demisto GA') is False
+        assert filter_envs.get('Server 5.5') is True
+        assert filter_envs.get('Server Master') is True
+        assert filter_envs.get('Server 6.0') is True
+        assert filter_envs.get('Server 5.0') is False
 
     def test_get_from_and_to_version_from_modified_files(self):
         """
